@@ -1,13 +1,73 @@
 from flask import Flask, request, jsonify, Response
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import timedelta
-import re, requests, logging, secrets, string, time, uuid
+from pymongo import MongoClient
 
-# Secret is temporary.
+import re, requests, logging, secrets, string, time, uuid, platform, subprocess
+
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = '345324g5342g5345254534534545t4w3g365uh56886yw567e56u8476867iu76r857r68e5u56u65e6nue5656eu56eu56eu565eu6uu65'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=0.5)
 jwt = JWTManager(app)
+db = None
+
+def getMongoDB():
+    client = MongoClient('localhost', 27017)
+    # Connect to the 'mydatabase' database
+    db = client['pygate']
+
+def createMongoDB():
+    # Connect to MongoDB (assuming it's running locally on default port)
+    client = MongoClient('localhost', 27017)
+
+    # Create to the 'mydatabase' database
+    db = client['pygate']
+
+    # Check if collection already exists.
+    collection_list = db.list_collection_names()
+    if "user_credentials" in collection_list:
+        app.logger.info("pygate | Database already initialized.")
+        return
+
+    collections = ['user_credentials', 'user_roles', 'users_roles', 'user_subscriptions',
+                   'api_keys', 'api_contexts', 'api_backends', 'api_backend_rotation',
+                   'api_endpoints', 'api_backend_api_endpoint', 'api_user_roles',
+                   'unhealthy_apis', 'unhealthy_urls']
+
+    for collection_name in collections:
+            db.create_collection(collection_name)
+
+    # Define indexes.
+    user_credentials_collection.create_index([('username', 1)], unique=True)
+    user_roles_collection.create_index([('role', 1)], unique=True)
+    users_roles_collection.create_index([('username', 1)], unique=True)
+    user_subscriptions_collection.create_index([('username', 1)], unique=True)
+    api_keys_collection.create_index([('api_context', 1)], unique=True)
+    api_contexts_collection.create_index([('apiKey', 1)], unique=True)
+    api_backends_collection.create_index([('apiKey', 1)], unique=True)
+    api_backend_rotation_collection.create_index([('api_key', 1)], unique=True)
+    api_endpoints_collection.create_index([('api_key', 1)], unique=True)
+    api_backend_api_endpoint_collection.create_index([('api_key', 1)], unique=True)
+    api_user_roles_collection.create_index([('apiKey', 1)], unique=True)
+    unhealthy_apis_collection.create_index([('apiKey', 1)], unique=True)
+    unhealthy_urls_collection.create_index([('apiKey', 1)], unique=True)
+
+    app.logger.info("pygate | Database initialization successful.")
+
+def startMongoDB():
+    subprocess_args = ["./mongodb/windows/bin/mongod", "--dbpath", "./mongodb/data"]
+    if platform.system() == "Windows":
+        subprocess_args[0] += ".exe"
+    subprocess.run(subprocess_args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def mongoDBCheck():
+    return
+
+def initializeMongoDB():
+    app.logger.info("pygate | Starting .."
+    # MongoDB startup/initialization
+    createMongoDB()
+    app.logger.info("pygate | Startup complete."
 
 total_data_out = {}
 
@@ -59,7 +119,6 @@ def revoked_token_callback():
     return jsonify({'message': 'Token has been revoked.'}), 401
 
 def generate_random_key(length):
-    """Generate a random key of specified length."""
     alphabet = string.ascii_letters + string.digits
     key = ''.join(secrets.choice(alphabet) for _ in range(length))
     return key
@@ -481,4 +540,9 @@ def gateway(path):
     return response
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    try:
+        startMongoDB()
+        initializeMongoDB()
+        app.run(debug=True)
+    except Exception as e:
+        app.logger.info("pygate | Startup failed | " + String(e))
