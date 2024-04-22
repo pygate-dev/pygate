@@ -64,10 +64,10 @@ def mongoDBCheck():
     return
 
 def initializeMongoDB():
-    app.logger.info("pygate | Starting .."
+    app.logger.info("pygate | Starting ..")
     # MongoDB startup/initialization
     createMongoDB()
-    app.logger.info("pygate | Startup complete."
+    app.logger.info("pygate | Startup complete.")
 
 total_data_out = {}
 
