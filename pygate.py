@@ -2,19 +2,32 @@ from flask import Flask, request, jsonify, Response, Blueprint
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import timedelta
 
+import re, requests, logging, secrets, string, time, uuid
 
+# routes>routing_file
 from routes.api_routes import api_bp
 from routes.auth_routes import auth_bp
 from routes.user_routes import user_bp
 
-from utilities.database import database
+# utilties>class_file
+from utilities.api import api
+from utilities.customJWT import customJWT
+from utilities.database import db
+from utilities.logger import logger
+from utilities.users import users
+from utilities.utils import utils
 
-import re, requests, logging, secrets, string, time, uuid, platform, subprocess, tarfile, os
+api = api()
+customJWT = customJWT()
+logger = logger()
+users = users()
+utils = utils()
 
 pygate = Flask(__name__)
 
 jwt = JWTManager()
 jwt.init_app(pygate)
+jwt = customJWT.customErrors(jwt)
 pygate.config['JWT_SECRET_KEY'] = '345324g5342g5345254534534545t4w3g365uh56886yw567e56u8476867iu76r857r68e5u56u65e6nue5656eu56eu56eu565eu6uu65'
 pygate.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=0.5)
 
@@ -24,7 +37,7 @@ pygate.register_blueprint(user_bp)
 
 ################################### STARTUP ###################################
 try:
-    db = database()
+    db = db()
     print("pygate | Database starting ..")
     db.initializeMongoDB()
     print("pygate | Database startup complete.")
