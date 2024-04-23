@@ -8,7 +8,7 @@ user_bp = Blueprint('user_routes', __name__)
 def removeUser(userId):
     # Ensure only an authorized user accesses this endpoint.
     current_user = get_jwt_identity()
-    Users.check_permission_endpoint(current_user)
+    users.check_admin_permission(current_user)
 
     # A user cannot delete themself.
     if current_user == userId:
@@ -28,7 +28,7 @@ def removeUser(userId):
 def addUser():
     # Ensure only an authorized user accesses this endpoint.
     current_user = get_jwt_identity()
-    Users.check_permission_endpoint(current_user)
+    users.check_admin_permission(current_user)
 
     # Get json data from the request body.
     request_body = request.json

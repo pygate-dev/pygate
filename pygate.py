@@ -28,7 +28,7 @@ pygate = Flask(__name__)
 jwt = JWTManager()
 jwt.init_app(pygate)
 jwt = customJWT.customErrors(jwt)
-pygate.config['JWT_SECRET_KEY'] = '345324g5342g5345254534534545t4w3g365uh56886yw567e56u8476867iu76r857r68e5u56u65e6nue5656eu56eu56eu565eu6uu65'
+pygate.config['JWT_SECRET_KEY'] = utils.get_secret_key()
 pygate.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=0.5)
 
 pygate.register_blueprint(api_bp)
