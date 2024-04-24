@@ -1,4 +1,4 @@
-class logger:
+class Logger:
     def start_log(pygate, request_uuid):
             pygate.logger.info(request_uuid + " | ----- Start request ----- ")
 

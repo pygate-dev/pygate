@@ -5,7 +5,7 @@ user_bp = Blueprint('user_routes', __name__)
 
 @user_bp.route('/user/<userId>', methods=['DELETE'])
 @jwt_required()
-def removeUser(userId):
+def remove_user(userId):
     # Ensure only an authorized user accesses this endpoint.
     current_user = get_jwt_identity()
     users.check_admin_permission(current_user)
@@ -25,7 +25,7 @@ def removeUser(userId):
 
 @user_bp.route('/user', methods=['POST'])
 @jwt_required()
-def addUser():
+def add_user():
     # Ensure only an authorized user accesses this endpoint.
     current_user = get_jwt_identity()
     users.check_admin_permission(current_user)

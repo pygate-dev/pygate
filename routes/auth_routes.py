@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 
-from utilities.users import users
+from utilities.users import Users
 
 auth_bp = Blueprint('auth_routes', __name__)
 
@@ -26,7 +26,7 @@ def authorization():
 
 @auth_bp.route('/authorization/jwt-settings', methods=['PUT'])
 @jwt_required()
-def jwtSettings():
+def jwt_settings():
     current_user = get_jwt_identity()
     users.check_admin_permission(current_user)
 

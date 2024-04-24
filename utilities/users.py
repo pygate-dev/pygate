@@ -1,4 +1,4 @@
-class users:
+class Users:
     def check_user_role_access_api(current_user, apiKey):
         user_role = ''
         if current_user in users_roles:

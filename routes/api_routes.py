@@ -1,12 +1,13 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
-from utilities.users import users
+
+from utilities.users import Users
 
 api_bp = Blueprint('api_routes', __name__)
 
 @api_bp.route('/api/<apiKey>', methods=['GET'])
 @jwt_required()
-def createMigrationArtifact(apiKey):
+def create_migration_artifact(apiKey):
     if not check_api_exists(apiKey):
         return jsonify({'message': 'API does not exist.'}), 400
     users.check_user_role_access_api(get_jwt_identity(), apiKey)
@@ -29,7 +30,7 @@ def createMigrationArtifact(apiKey):
 
 @api_bp.route('/api/<apiKey>/subscribe', methods=['POST'])
 @jwt_required()
-def subscribeToAPI(apiKey):
+def subscribe_to_api(apiKey):
     if not check_api_exists(apiKey):
         return jsonify({'message': 'API does not exist.'}), 400
     users.check_user_role_access_api(get_jwt_identity(), apiKey)
@@ -45,7 +46,7 @@ def subscribeToAPI(apiKey):
 
 @api_bp.route('/api/<apiKey>/unsubscribe', methods=['POST'])
 @jwt_required()
-def unsubscribeToAPI(apiKey):
+def unsubscribe_to_api(apiKey):
     check_api_exists(apiKey)
     current_user = get_jwt_identity()
 
@@ -58,7 +59,7 @@ def unsubscribeToAPI(apiKey):
 
 @api_bp.route('/backend/<apiKey>/resolve', methods=['POST'])
 @jwt_required()
-def resolveDownBackend(apiKey):
+def resolve_down_backend(apiKey):
     # Ensure only an authorized user accesses this endpoint.
     current_user = get_jwt_identity()
     users.check_permission_endpoint(current_user)
@@ -77,7 +78,7 @@ def resolveDownBackend(apiKey):
 
 @api_bp.route('/backend/unhealthy', methods=['GET'])
 @jwt_required()
-def getUnhealthyBackends():
+def get_unhealthy_backends():
     # Ensure only an authorized user accesses this endpoint.
     current_user = get_jwt_identity()
     users.check_permission_endpoint(current_user)
@@ -96,7 +97,7 @@ def getUnhealthyBackends():
 
 @api_bp.route('/endpoint', methods=['POST'])
 @jwt_required()
-def addEndpoint():
+def add_endpoint():
     # Ensure only an authorized user accesses this endpoint.
     current_user = get_jwt_identity()
     users.check_permission_endpoint(current_user)
@@ -132,7 +133,7 @@ def addEndpoint():
 
 @api_bp.route('/api', methods=['POST'])
 @jwt_required()
-def addAPI():
+def add_api():
     # Ensure only an authorized user accesses this endpoint.
     current_user = get_jwt_identity()
     users.check_permission_endpoint(current_user)

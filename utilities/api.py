@@ -1,4 +1,4 @@
-class api:
+class API:
     def check_api_exists(apiKey):
         return apiKey in api_contexts
 

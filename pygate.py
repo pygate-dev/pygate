@@ -4,24 +4,24 @@ from datetime import timedelta
 
 import re, requests, logging, secrets, string, time, uuid
 
-# routes>routing_file
+# routes>routing
 from routes.api_routes import api_bp
 from routes.auth_routes import auth_bp
 from routes.user_routes import user_bp
 
-# utilties>class_file
-from utilities.api import api
-from utilities.customJWT import customJWT
-from utilities.database import db
-from utilities.logger import logger
-from utilities.users import users
-from utilities.utils import utils
+# utilties>class
+from utilities.api import API
+from utilities.custom_jwt import CustomJWT
+from utilities.database import DB
+from utilities.logger import Logger
+from utilities.users import Users
+from utilities.utils import Utils
 
-api = api()
-customJWT = customJWT()
-logger = logger()
-users = users()
-utils = utils()
+api = API()
+customJWT = CustomJWT()
+logger = Logger()
+users = Users()
+utils = Utils()
 
 pygate = Flask(__name__)
 

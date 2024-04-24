@@ -1,6 +1,6 @@
 from flask_jwt_extended import JWTManager
 
-class customJWT:
+class CustomJWT:
     def customErrors(self, jwt):
         @jwt.expired_token_loader
         def expired_token_callback(one, two):

@@ -1,6 +1,6 @@
 import secrets, string, os
 
-class utils:
+class Utils:
     def generate_random_key(self, length):
         alphabet = string.ascii_letters + string.digits
         key = ''.join(secrets.choice(alphabet) for _ in range(length))
