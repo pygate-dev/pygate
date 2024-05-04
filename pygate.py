@@ -22,6 +22,7 @@ customJWT = CustomJWT()
 logger = Logger()
 users = Users()
 utils = Utils()
+db = None
 
 pygate = Flask(__name__)
 
@@ -37,7 +38,7 @@ pygate.register_blueprint(user_bp)
 
 ################################### STARTUP ###################################
 try:
-    db = db()
+    db = DB()
     print("pygate | Database starting ..")
     db.initializeMongoDB()
     print("pygate | Database startup complete.")

@@ -8,6 +8,12 @@ class DB:
         except Exception as e:
             raise MongoConnectionError("MongoDB is not started.") from e
 
+    def singleQuery(self, db, table, value):
+        data = None
+        query_collection = db["pygate"]
+        document = query_collection.find_one({table: value})
+        return data
+
     def initializeMongoDB(self):
         client = self.getMongoDB()
         db = client['pygate']
@@ -17,6 +23,7 @@ class DB:
             print("pygate | Database already initialized.")
             return
 
+        # Create tables
         user_credentials = db.create_collection('user_credentials')
         user_roles = db.create_collection('user_roles')
         users_roles = db.create_collection('users_roles')
@@ -45,5 +52,9 @@ class DB:
         api_user_roles.create_index([('apiKey', 1)], unique=True)
         unhealthy_apis.create_index([('apiKey', 1)], unique=True)
         unhealthy_urls.create_index([('apiKey', 1)], unique=True)
+
+        user_credentials.insert_one({ "username": "admin", "password": "password" })
+        user_roles.insert_one({ "admin": ""})
+        users_roles.insert_one({ "admin": "admin"})
 
         print("pygate | Database initialization successful.")
