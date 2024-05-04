@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, create_access_token
 
 from utilities.users import Users
+from utilities.database import DB
 
 auth_bp = Blueprint('auth_routes', __name__)
 
@@ -17,7 +18,10 @@ def authorization():
         return jsonify({'message': 'Missing username or password'}), 400
 
     # Check if user exists and the password is valid.
-    if username not in user_credentials or user_credentials[username] != password:
+    db = DB()
+    user_credentials = db.singleQuery("username", username)
+    print(user_credentials)
+    if not user_credentials or user_credentials["username"] != username or user_credentials["password"] != password:
         return jsonify({'message': 'Invalid username or password'}), 401
 
     # Generate access token.

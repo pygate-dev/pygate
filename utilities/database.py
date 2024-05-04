@@ -1,21 +1,29 @@
 from pymongo import MongoClient
 
 class DB:
-    def getMongoDB(self):
+    client = None;
+    db = None
+
+    def getMongoClient(self):
         try:
             client = MongoClient('localhost', 27017, serverSelectionTimeoutMS=1000)
             return client
         except Exception as e:
             raise MongoConnectionError("MongoDB is not started.") from e
 
-    def singleQuery(self, db, table, value):
+    def singleQuery(self, table, value):
         data = None
-        query_collection = db["pygate"]
-        document = query_collection.find_one({table: value})
+        try:
+            client = self.getMongoClient()
+            db = client['pygate']
+            collection = db["user_credentials"]
+            data = collection.find_one({table: value})
+        except Exception as e:
+            raise ConnectionError("Error getting data from Pygate DB.") from e
         return data
 
     def initializeMongoDB(self):
-        client = self.getMongoDB()
+        client = self.getMongoClient()
         db = client['pygate']
         # Check if collection already exists.
         collection_list = db.list_collection_names()
