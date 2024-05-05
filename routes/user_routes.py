@@ -15,6 +15,8 @@ def remove_user(userId):
         return jsonify({'message': 'Unable to remove self.'}), 400
 
     # Delete the user if they exist.
+    db = DB()
+    user_credentials = db.singleQuery("user_credentials", "username", userId)
     if userId and userId in user_credentials:
             del user_credentials[userId]
             del users_roles[userId]
@@ -36,12 +38,15 @@ def add_user():
     password = request_body.get('password')
     role = request_body.get('role')
 
+    db = DB()
+    user_credentials = db.singleQuery("user_credentials", "username", username)
     # Ensure the username doesn't already exist and the role is valid.
     if username and username not in user_credentials:
+        user_credentials = db.singleQuery("user_roles", "username", username)
         if role and role in user_roles:
-            user_credentials[username] = password
-            users_roles[username] = role
-            user_subscriptions[username] = []
+            db.singleInsert(user_credentials, username, password)
+            db.singleInsert(users_roles, username, role)
+            db.singleInsert(user_subscriptions, username, [])
         else:
             return jsonify({'message': 'Role does not exist.'}), 400
     else:

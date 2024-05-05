@@ -11,16 +11,26 @@ class DB:
         except Exception as e:
             raise MongoConnectionError("MongoDB is not started.") from e
 
-    def singleQuery(self, table, value):
+    def singleQuery(self, collection, key, value):
         data = None
         try:
             client = self.getMongoClient()
             db = client['pygate']
-            collection = db["user_credentials"]
-            data = collection.find_one({table: value})
+            collection = db[collection]
+            data = collection.find_one({key: value})
         except Exception as e:
             raise ConnectionError("Error getting data from Pygate DB.") from e
         return data
+
+    def singleInsert(self, collection, key, value):
+        data = None
+        try:
+            client = self.getMongoClient()
+            db = client['pygate']
+            collection = db[collection]
+            collection.insert_one({key: value})
+        except Exception as e:
+            raise ConnectionError("Error adding data to Pygate DB.") from e
 
     def initializeMongoDB(self):
         client = self.getMongoClient()

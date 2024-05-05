@@ -19,7 +19,7 @@ def authorization():
 
     # Check if user exists and the password is valid.
     db = DB()
-    user_credentials = db.singleQuery("username", username)
+    user_credentials = db.singleQuery("user_credentials", "username", username)
     print(user_credentials)
     if not user_credentials or user_credentials["username"] != username or user_credentials["password"] != password:
         return jsonify({'message': 'Invalid username or password'}), 401
@@ -32,7 +32,7 @@ def authorization():
 @jwt_required()
 def jwt_settings():
     current_user = get_jwt_identity()
-    users.check_admin_permission(current_user)
+    users.check_admin_endpoint(current_user)
 
     # Get json data from the request body.
     data = request.json

@@ -7,8 +7,10 @@ class Users:
             return jsonify({'message': 'User role does not have access to this API.'}), 403
 
     def check_admin_endpoint(current_user):
+        db = DB()
+        users_roles = db.singleQuery("users_roles", "username", username)
         user_role = ''
-        if current_user in users_roles:
+        if users_roles and current_user in users_roles:
             user_role = users_roles[current_user]
         if user_role != 'admin':
             return jsonify({'message': 'You do not have permission to access this endpoint.'}), 403
